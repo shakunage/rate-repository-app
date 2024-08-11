@@ -11,13 +11,18 @@ const styles = StyleSheet.create({
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-const RepositoryList = () => {
+const RepositoryList = ({ sortCondition, searchKeyword }) => {
 
-  const { repositories } = useRepositories();
+  const { repositories, fetchMore } = useRepositories({first: 5, sortCondition, searchKeyword});
   
   const repositoryNodes = repositories
     ? repositories.repositories.edges.map(edge => edge.node)
     : [];
+
+    const onEndReach = () => {
+      console.log('You have reached the end of the list');
+      fetchMore();
+    };
 
   return (
     <FlatList
@@ -25,6 +30,8 @@ const RepositoryList = () => {
       ItemSeparatorComponent={ItemSeparator}
       renderItem={RepositoryItem}
       keyExtractor={(item, index) => index.toString()}
+      onEndReach={onEndReach()}
+      onEndReachedThreshold={0.7}
     />
   );
 };
